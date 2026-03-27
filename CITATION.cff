@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Jose"
+    given-names: "Keno S."
+title: "MHRQI: Multi-scale Hierarchical Representation of Quantum Images"
+version: 0.1.0
+date-released: 2026-03-13
+url: "https://github.com/Keno-00/MHRQI"

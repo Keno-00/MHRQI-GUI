@@ -1,0 +1,139 @@
+[project]
+name = "mhrqi"
+version = "0.1.0"
+description = "Multi-scale Hierarchical Representation of Quantum Images"
+authors = [{name = "Keno S. Jose"}]
+license = {text = "Apache-2.0"}
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["quantum computing", "image representation", "medical imaging", "denoising", "hierarchical"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+
+dependencies = [
+    "matplotlib",
+    "opencv-python",
+    "dearpygui",
+    "qiskit",
+    "qiskit-aer",
+    "bm3d",
+    "brisque",
+    "srad",
+    "scikit-video",
+    "pypiqe",
+    "piq",
+    "torch",
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "pillow",
+]
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+dev = [
+    "ruff",
+    "pre-commit",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+mhrqi = "mhrqi.cli.main:main_cli"
+mhrqi-gui = "mhrqi.gui.main:launch_gui"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mhrqi*"]
+
+[tool.ruff]
+# Exclude common directories
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    "benchmark",
+    "runs",
+    "docs",
+]
+
+# Python version
+target-version = "py39"
+
+# Line length
+line-length = 100
+
+[tool.ruff.lint]
+# Enable rules
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "ARG",    # flake8-unused-arguments
+    "SIM",    # flake8-simplify
+    "T20",    # flake8-print
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "E402",   # module level import not at top (lazy loading)
+    "F401",   # imported but unused (lazy loaded modules)
+    "B905",   # zip without explicit strict=
+    "SIM108", # use ternary operator
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+# Allow unused imports in __init__ files
+"__init__.py" = ["F401"]
+# Allow print statements in benchmark scripts
+# Allow prints in benchmark, visualization, and example scripts
+"mhrqi/benchmarks/*.py" = ["T201"]
+"mhrqi/utils/visualization.py" = ["T201"]
+"mhrqi/cli/main.py" = ["T201"]
+"examples/*.ipynb" = ["T201"]
+"examples/*.py" = ["T201"]
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces
+indent-style = "space"
+
+# Format docstrings
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=mhrqi"

@@ -1,0 +1,50 @@
+site_name: MHRQI
+site_description: Multi-scale Hierarchical Representation of Quantum Images
+site_author: Keno S. Jose
+repo_url: https://github.com/Keno-00/MHRQI
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            group_by_category: true
+
+nav:
+  - Home: index.md
+  - Guide: guide.md
+  - API Reference:
+      - Representation: api/core.md
+      - Denoising: api/denoising.md
+      - Utils: api/utils.md
+      - Benchmarks: api/benchmarks.md
+
+  - Contributing: contributing.md
