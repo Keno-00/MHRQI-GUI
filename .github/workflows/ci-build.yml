@@ -43,13 +43,67 @@ jobs:
           bash ./build_macos.sh
         shell: bash
 
-      - name: Install Windows build dependencies
+      - name: Ensure Dependency Walker & UPX (Windows)
         if: runner.os == 'Windows'
+        shell: pwsh
         run: |
           choco feature enable -n allowGlobalConfirmation || true
-          choco install dependencywalker -y || choco install dependencywalker.portable -y || Write-Host "dependencywalker install failed"
-          choco install upx -y || Write-Host "upx install failed"
-        shell: pwsh
+          $installed = $false
+          try {
+            choco install dependencywalker.portable -y -r
+            $installed = $true
+          } catch {
+            Write-Host "choco dependencywalker.portable install failed: $_"
+          }
+          if (-not $installed) {
+            try {
+              choco install dependencywalker -y -r
+              $installed = $true
+            } catch {
+              Write-Host "choco dependencywalker install failed: $_"
+            }
+          }
+
+          # Try to locate depends.exe from common install locations
+          $candidatePaths = @(
+            "$env:ChocolateyInstall\lib\dependencywalker.portable\tools",
+            "$env:ChocolateyInstall\lib\dependencywalker\tools",
+            "$env:ProgramFiles\Dependency Walker",
+            "$env:ProgramFiles(x86)\Dependency Walker"
+          )
+          $found = $null
+          foreach ($p in $candidatePaths) {
+            if (Test-Path $p) { $found = $p; break }
+          }
+
+          if (-not $found) {
+            Write-Host "Dependency Walker not found by choco; searching disk..."
+            try {
+              $search = Get-ChildItem -Path C:\ -Filter depends.exe -ErrorAction SilentlyContinue -Recurse -Force -Depth 6 | Select-Object -First 1
+              if ($search) { $found = $search.DirectoryName }
+            } catch {
+              Write-Host "Disk search failed or was too slow: $_"
+            }
+          }
+
+          if ($found) {
+            Write-Host "Found Dependency Walker at $found — adding to PATH"
+            Add-Content -Path $env:GITHUB_PATH -Value $found
+          } else {
+            Write-Host "Dependency Walker not found; attempting to download a portable copy..."
+            $tmp = Join-Path $env:RUNNER_TEMP 'depends.zip'
+            # Try a best-effort download; if it fails, we'll let Nuitka attempt its own download.
+            try {
+              Invoke-WebRequest -Uri 'https://dependencywalker.com/DependencyWalker_2_2_0_32.zip' -OutFile $tmp -UseBasicParsing -ErrorAction Stop
+              Expand-Archive -Path $tmp -DestinationPath "$env:RUNNER_TEMP\depends"
+              Add-Content -Path $env:GITHUB_PATH -Value "$env:RUNNER_TEMP\depends"
+            } catch {
+              Write-Host "Automatic download failed: $_"
+            }
+          }
+
+          # Install UPX for compression (optional)
+          try { choco install upx -y -r } catch { Write-Host "upx install failed: $_" }
 
       - name: Build on Windows
         if: runner.os == 'Windows'

@@ -11,7 +11,7 @@ if (!(Test-Path $OUT)) { New-Item -ItemType Directory -Path $OUT | Out-Null }
 
 Write-Host "Installing/ensuring Nuitka..."
 & $PY -m pip install --upgrade pip setuptools wheel
-& $PY -m pip install nuitka
+& $PY -m pip install "nuitka[onefile]" zstandard
 
 Write-Host "Building run_gui (onefile, GUI mode)..."
 & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py

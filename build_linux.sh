@@ -8,7 +8,7 @@ mkdir -p "$OUT"
 
 echo "Installing/ensuring Nuitka..."
 $PY -m pip install --upgrade pip setuptools wheel
-$PY -m pip install nuitka
+$PY -m pip install "nuitka[onefile]" zstandard
 
 echo "Building mhrqi CLI (onefile)..."
 LTO_ARG=""
