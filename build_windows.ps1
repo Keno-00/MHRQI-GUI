@@ -30,10 +30,14 @@ if ($depends) {
   $depends = Get-Command depends.exe -ErrorAction SilentlyContinue
   if ($depends) {
     Write-Host "Dependency Walker installed at: $($depends.Path)"
-    & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+    $nuitkaCmd = "`"$PY`" -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py"
+    Write-Host "Running: cmd /c echo Y | $nuitkaCmd"
+    cmd.exe /c "echo Y | $nuitkaCmd"
   } else {
     Write-Host "Dependency Walker still not found. Piping 'Y' to Nuitka to allow automatic download (non-interactive)."
-    'Y' | & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+    $nuitkaCmd = "`"$PY`" -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py"
+    Write-Host "Running: cmd /c echo Y | $nuitkaCmd"
+    cmd.exe /c "echo Y | $nuitkaCmd"
   }
 }
 
