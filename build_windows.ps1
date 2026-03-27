@@ -14,7 +14,28 @@ Write-Host "Installing/ensuring Nuitka..."
 & $PY -m pip install "nuitka[onefile]" zstandard
 
 Write-Host "Building run_gui (onefile, GUI mode)..."
-& $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+# Check for Dependency Walker (depends.exe). Nuitka requires it on Windows for onefile/standalone.
+$depends = Get-Command depends.exe -ErrorAction SilentlyContinue
+if ($depends) {
+  Write-Host "Dependency Walker found: $($depends.Path)"
+  & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+} else {
+  Write-Host "Dependency Walker not found. Attempting choco install dependencywalker.portable..."
+  try {
+    choco install dependencywalker.portable -y -r
+  } catch {
+    Write-Host "choco install failed: $_"
+  }
+
+  $depends = Get-Command depends.exe -ErrorAction SilentlyContinue
+  if ($depends) {
+    Write-Host "Dependency Walker installed at: $($depends.Path)"
+    & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+  } else {
+    Write-Host "Dependency Walker still not found. Piping 'Y' to Nuitka to allow automatic download (non-interactive)."
+    'Y' | & $PY -m nuitka --onefile --remove-output --output-dir=$OUT --output-filename=mhrqi-gui.exe --windows-console-mode=disable --python-flag=no_docstrings --python-flag=no_asserts --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
+  }
+}
 
 if (Get-Command upx -ErrorAction SilentlyContinue) {
   Write-Host "Compressing with UPX..."
