@@ -22,6 +22,7 @@ General recommendations
   - `--output-dir=build/<platform>` (where artifacts go)
   - `--output-filename=<name>` (control binary name)
   - `--lto` (link-time optimization)
+   - `--lto=<level>` (link-time optimization — newer Nuitka requires an argument; e.g. `--lto=full`)
   - `--python-flag=no_docstrings` and `--python-flag=no_asserts` (reduce size)
   - `--enable-plugin=numpy` (help for numpy-based packages)
   - `--include-data-dir=resources=resources` (include images/resources folder)
@@ -48,16 +49,16 @@ Build (minimal / example):
 
 ```powershell
 $PY = "c:/Users/Admin/Documents/source_repos/MHRQI-0.1.0/.venv/Scripts/python.exe"
-$PY -m nuitka --onefile --remove-output --output-dir=build/windows --output-filename=mhrqi-gui.exe \
-  --windows-console-mode=disable --lto --python-flag=no_docstrings --python-flag=no_asserts \
+  $PY -m nuitka --onefile --remove-output --output-dir=build/windows --output-filename=mhrqi-gui.exe \
+  --windows-console-mode=disable --lto=full --python-flag=no_docstrings --python-flag=no_asserts \
   --enable-plugin=numpy --include-data-dir=resources=resources run_gui.py
 ```
 
 Optional: exclude heavy packages for a *minimal* build (use with care):
 
 ```powershell
-$PY -m nuitka --onefile --remove-output --output-dir=build/windows --output-filename=mhrqi-cli.exe \
-  --lto --python-flag=no_docstrings --python-flag=no_asserts \
+  $PY -m nuitka --onefile --remove-output --output-dir=build/windows --output-filename=mhrqi-cli.exe \
+  --lto=full --python-flag=no_docstrings --python-flag=no_asserts \
   --nofollow-import-to=qiskit --nofollow-import-to=qiskit_aer --nofollow-import-to=torch \
   --nofollow-import-to=dearpygui --include-data-dir=resources=resources mhrqi/cli/main.py
 ```
@@ -80,7 +81,7 @@ $PY -m pip install nuitka
 
 # Build minimal CLI (example)
 $PY -m nuitka --onefile --remove-output --output-dir=build/linux --output-filename=mhrqi-cli \
-  --lto --python-flag=no_docstrings --python-flag=no_asserts \
+  --lto=full --python-flag=no_docstrings --python-flag=no_asserts \
   --nofollow-import-to=qiskit --nofollow-import-to=qiskit_aer --nofollow-import-to=torch \
   --include-data-dir=resources=resources mhrqi/cli/main.py
 
@@ -102,7 +103,7 @@ $PY -m pip install nuitka
 
 # Create macOS app bundle (useful for GUI apps)
 $PY -m nuitka --onefile --macos-create-app-bundle --output-dir=build/macos --output-filename=mhrqi-gui \
-  --lto --python-flag=no_docstrings --python-flag=no_asserts --include-data-dir=resources=resources run_gui.py
+  --lto=full --python-flag=no_docstrings --python-flag=no_asserts --include-data-dir=resources=resources run_gui.py
 
 # Optional: codesign/notarize the created bundle before distribution (see Apple docs)
 # no need sign or notarize because it is for professor eyes only.

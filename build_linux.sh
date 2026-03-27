@@ -11,8 +11,13 @@ $PY -m pip install --upgrade pip setuptools wheel
 $PY -m pip install nuitka
 
 echo "Building mhrqi CLI (onefile)..."
+$LTO_ARG=""
+if [ -n "${LTO:-}" ]; then
+  LTO_ARG="--lto=${LTO}"
+fi
+
 $PY -m nuitka --onefile --remove-output --output-dir="$OUT" --output-filename=mhrqi-cli \
-  --lto --python-flag=no_docstrings --python-flag=no_asserts \
+  $LTO_ARG --python-flag=no_docstrings --python-flag=no_asserts \
   --nofollow-import-to=qiskit --nofollow-import-to=qiskit_aer --nofollow-import-to=torch \
   --include-data-dir=resources=resources mhrqi/cli/main.py
 
