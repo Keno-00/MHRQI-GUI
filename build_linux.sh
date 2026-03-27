@@ -11,7 +11,7 @@ $PY -m pip install --upgrade pip setuptools wheel
 $PY -m pip install nuitka
 
 echo "Building mhrqi CLI (onefile)..."
-$LTO_ARG=""
+LTO_ARG=""
 if [ -n "${LTO:-}" ]; then
   LTO_ARG="--lto=${LTO}"
 fi
