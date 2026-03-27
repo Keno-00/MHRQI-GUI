@@ -14,6 +14,10 @@ Write-Host "Installing/ensuring Nuitka..."
 & $PY -m pip install "nuitka[onefile]" zstandard
 
 Write-Host "Building run_gui (onefile, GUI mode)..."
+# Increase MSVC compiler heap via /Zm to avoid C1002 "out of heap space" on large translation units.
+# You can bump this value if needed (e.g. /Zm3000).
+$env:CL = if ($env:CL) { "$env:CL /Zm2000" } else { "/Zm2000" }
+Write-Host "CL flags: $env:CL"
 # Check for Dependency Walker (depends.exe). Nuitka requires it on Windows for onefile/standalone.
 $depends = Get-Command depends.exe -ErrorAction SilentlyContinue
 if ($depends) {

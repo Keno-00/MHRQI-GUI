@@ -114,6 +114,8 @@ jobs:
           $PY = (Resolve-Path .\.venv\Scripts\python.exe).Path
           & .\build_windows.ps1 -PY $PY
         shell: pwsh
+        env:
+          CL: "/Zm2000"
 
       - name: Upload Linux artifact
         if: runner.os == 'Linux'
