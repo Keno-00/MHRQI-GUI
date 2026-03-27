@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.10, 3.11, 3.12]
+        python-version: [3.11, 3.12]
 
     steps:
       - name: Checkout
@@ -30,7 +30,7 @@ jobs:
           source .venv/bin/activate
           export PY=.venv/bin/python
           $PY -m pip install --upgrade pip setuptools wheel
-          ./build_linux.sh
+          bash ./build_linux.sh
         shell: bash
 
       - name: Build on macOS
@@ -40,12 +40,13 @@ jobs:
           source .venv/bin/activate
           export PY=.venv/bin/python
           $PY -m pip install --upgrade pip setuptools wheel
-          ./build_macos.sh
+          bash ./build_macos.sh
         shell: bash
 
       - name: Build on Windows
         if: runner.os == 'Windows'
         run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           $PY = (Resolve-Path .\.venv\Scripts\python.exe).Path
