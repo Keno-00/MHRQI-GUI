@@ -43,6 +43,14 @@ jobs:
           bash ./build_macos.sh
         shell: bash
 
+      - name: Install Windows build dependencies
+        if: runner.os == 'Windows'
+        run: |
+          choco feature enable -n allowGlobalConfirmation || true
+          choco install dependencywalker -y || choco install dependencywalker.portable -y || Write-Host "dependencywalker install failed"
+          choco install upx -y || Write-Host "upx install failed"
+        shell: pwsh
+
       - name: Build on Windows
         if: runner.os == 'Windows'
         run: |
